@@ -1,0 +1,19 @@
+{
+  "name": "mongo-search",
+  "version": "1.0.0",
+  "description": "rest search on mongodb",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mongodb", "http"],
+  "author": "ronaldronson",
+  "devDependencies": {
+    "nodemon": "^1.10.2"
+  },
+  "dependencies": {
+    "mongodb": "^2.2.9",
+    "qs": "^6.2.1"
+  }
+}
