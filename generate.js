@@ -1,3 +1,5 @@
+const ukPostcodes = require('./ukpostcodes')
+
 const data = {
   "id": 8620,
   "status": "New",
@@ -39,6 +41,7 @@ const data = {
   },
   "Top500": true
 }
+
 const cuisines = [
   "All Night Alcohol",
   "American",
@@ -84,14 +87,24 @@ const cuisines = [
   "Vegetarian",
   "Vietnamese"
 ]
+
 const coordinates = {
   "lng": -0.222812184852696,
   "lat": 51.4808482449117
 }
 
+const getPostcodes = () => {
+  const startIdx = (Math.random() * (ukPostcodes.length - 10000))|0
+  const endIdx = startIdx + (Math.random() * 10000)|0
+  const postcodes = ukPostcodes.slice(startIdx, endIdx)
+
+  return postcodes
+}
+
 const generate = (db, n) => {
   const start = Date.now()
   const rand = () => (Math.random() * 32)|0
+  
   const rests = Array.apply(null, {length: n}).map((v, i) =>
     Object.assign({}, data, {
       id: i,
@@ -108,7 +121,8 @@ const generate = (db, n) => {
         cuisines[rand()]
       ],
       min_delivery_value: i / 100,
-      Top500: !(i % 2)
+      Top500: !(i % 2),
+      postcodes: getPostcodes()
     }))
 
   db.collection('rests').insertMany(rests, (err, result) => {
@@ -120,5 +134,5 @@ const generate = (db, n) => {
 
 require('mongodb').MongoClient
   .connect('mongodb://localhost:32768/search', (err, db) => {
-    err ? console.log(err) : generate(db, 1000)
+    err ? console.log(err) : generate(db, 10)
   })

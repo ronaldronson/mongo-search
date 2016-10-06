@@ -4,6 +4,7 @@ const qs = require('qs')
 const MongoClient = require('mongodb').MongoClient
 
 const filtersList = {
+  postcode: _ => ({postcode: {$in: _}}), 
   cuisine: _ => ({cuisines: {$in: _.split(',')}}),
   delivery: _ => ({delivery_charge: 0}),
   top500: _ => ({Top500: true}),
@@ -19,10 +20,10 @@ const sortList = {
 
 const allowedFilterKeys = Object.keys(filtersList)
 
-const geoIDS = {id: {'$in': Array.apply(null, {length: 10}).map((v, i) => i)}}
+// const geoIDS = {id: {'$in': Array.apply(null, {length: 10}).map((v, i) => i)}}
 const filter = (params) => Object.keys(params)
   .filter(name => !~allowedFilterKeys.indexOf(name))
-  .reduce((res, name) => Object.assign({}, res, filtersList[name](params[name])), geoIDS)
+  .reduce((res, name) => Object.assign({}, res, filtersList[name](params[name])), {})
 
 const responce = (data, url = '') => ({data: {
   type: 'restaurant-search',
@@ -48,6 +49,6 @@ const webserv = (db) => http.createServer((req, res) => {
   }
 }).listen(8080)
 
-MongoClient.connect('mongodb://localhost:32770/search', (err, db) => {
+MongoClient.connect('mongodb://localhost:32768/search', (err, db) => {
   err ? console.log(err) : webserv(db)
 })
