@@ -96,15 +96,14 @@ const coordinates = {
 const getPostcodes = () => {
   const startIdx = (Math.random() * (ukPostcodes.length - 10000))|0
   const endIdx = startIdx + (Math.random() * 10000)|0
-  const postcodes = ukPostcodes.slice(startIdx, endIdx)
 
-  return postcodes
+  return ukPostcodes.slice(startIdx, endIdx)
 }
 
 const generate = (db, n) => {
   const start = Date.now()
   const rand = () => (Math.random() * 32)|0
-  
+
   const rests = Array.apply(null, {length: n}).map((v, i) =>
     Object.assign({}, data, {
       id: i,
@@ -134,5 +133,5 @@ const generate = (db, n) => {
 
 require('mongodb').MongoClient
   .connect('mongodb://localhost:32768/search', (err, db) => {
-    err ? console.log(err) : generate(db, 10)
+    err ? console.log(err) : generate(db, 20000)
   })

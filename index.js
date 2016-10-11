@@ -1,10 +1,11 @@
 const http = require('http')
 const url = require('url')
 const qs = require('qs')
+
 const MongoClient = require('mongodb').MongoClient
 
 const filtersList = {
-  postcode: _ => ({postcode: {$in: _}}), 
+  postcode: _ => ({postcodes: _}),
   cuisine: _ => ({cuisines: {$in: _.split(',')}}),
   delivery: _ => ({delivery_charge: 0}),
   top500: _ => ({Top500: true}),
@@ -20,12 +21,11 @@ const sortList = {
 
 const allowedFilterKeys = Object.keys(filtersList)
 
-// const geoIDS = {id: {'$in': Array.apply(null, {length: 10}).map((v, i) => i)}}
-const filter = (params) => Object.keys(params)
-  .filter(name => !~allowedFilterKeys.indexOf(name))
+const filter = (params = {}) => Object.keys(params)
+  .filter(name => !!~allowedFilterKeys.indexOf(name))
   .reduce((res, name) => Object.assign({}, res, filtersList[name](params[name])), {})
 
-const responce = (data, url = '') => ({data: {
+const responce = (data = [], url = '') => ({data: {
   type: 'restaurant-search',
   attributes: {total: data.length, restaurants: data},
   links: {self: url}
@@ -37,8 +37,10 @@ const webserv = (db) => http.createServer((req, res) => {
 
   if ('/' === params.pathname) {
     db.collection('rests')
-      .find(filter(query.filters))
+      .find(filter(query.filters), {postcodes: 0})
       .sort(sortList[query.sort] || {})
+      .skip(query.skip | 0 || 0)
+      .limit(query.limit | 0 || 0)
       .toArray((err, resp) => {
         res.writeHead(200, {'Content-Type': 'application/json'})
         res.end(JSON.stringify(responce(resp, req.url)))
@@ -47,7 +49,7 @@ const webserv = (db) => http.createServer((req, res) => {
     res.writeHead(404)
     res.end()
   }
-}).listen(8080)
+}).listen(8080, () => console.log('listen to port ', 8080))
 
 MongoClient.connect('mongodb://localhost:32768/search', (err, db) => {
   err ? console.log(err) : webserv(db)
