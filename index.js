@@ -37,7 +37,7 @@ const webserv = (db) => http.createServer((req, res) => {
 
   if ('/' === params.pathname) {
     db.collection('rests')
-      .find(filter(query.filters), {postcodes: 0})
+      .find(filter(query.filters), {postcodes: 0, _id: 0})
       .sort(sortList[query.sort] || {})
       .skip(query.skip | 0 || 0)
       .limit(query.limit | 0 || 0)

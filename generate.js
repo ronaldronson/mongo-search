@@ -93,16 +93,16 @@ const coordinates = {
   "lat": 51.4808482449117
 }
 
-const getPostcodes = () => {
-  const startIdx = (Math.random() * (ukPostcodes.length - 10000))|0
-  const endIdx = startIdx + (Math.random() * 10000)|0
+const rand = (i = 32) => (Math.random() * i)|0
 
+const getPostcodes = () => {
+  const startIdx = rand(ukPostcodes.length - 10000)
+  const endIdx = startIdx + rand(10000)
   return ukPostcodes.slice(startIdx, endIdx)
 }
 
 const generate = (db, n) => {
-  const start = Date.now()
-  const rand = () => (Math.random() * 32)|0
+  console.time('work:')
 
   const rests = Array.apply(null, {length: n}).map((v, i) =>
     Object.assign({}, data, {
@@ -113,7 +113,7 @@ const generate = (db, n) => {
         lat: data.coordinates.lat + (i / 1000),
         lng: data.coordinates.lng - (i / 1000)
       },
-      distance: (Math.random() * 1000)|0,
+      distance: rand(1000),
       rating: i + rand(),
       cuisines: [
         cuisines[rand()],
@@ -125,7 +125,7 @@ const generate = (db, n) => {
     }))
 
   db.collection('rests').insertMany(rests, (err, result) => {
-    console.log('work: ', Date.now() - start)
+    console.timeEnd('work:')
     err && console.log(err)
     db.close()
   })
