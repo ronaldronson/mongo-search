@@ -132,6 +132,6 @@ const generate = (db, n) => {
 }
 
 require('mongodb').MongoClient
-  .connect('mongodb://localhost:32768/search', (err, db) => {
-    err ? console.log(err) : generate(db, 20000)
+  .connect('mongodb://mongo:27017/search', (err, db) => {
+    err ? console.log(err) : generate(db, 10000)
   })

@@ -19,3 +19,4 @@ build/
 www/public
 sputnik/*
 !sputnik/.git
+db/

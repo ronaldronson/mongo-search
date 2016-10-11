@@ -51,6 +51,6 @@ const webserv = (db) => http.createServer((req, res) => {
   }
 }).listen(8080, () => console.log('listen to port ', 8080))
 
-MongoClient.connect('mongodb://localhost:32768/search', (err, db) => {
+MongoClient.connect('mongodb://mongo:27017/search', (err, db) => {
   err ? console.log(err) : webserv(db)
 })

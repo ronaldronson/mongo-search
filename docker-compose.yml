@@ -1,0 +1,23 @@
+version: '2'
+services:
+    app:
+        image: node:6 # we will work with latest NodeJS 6.X
+        volumes: # bind sources to /src
+          - ".:/src"
+        ports:
+            - "8080:8080" #open required ports here
+        depends_on:
+            - mongo
+        environment: # add required environment variables if need
+            - PORT=8080
+            - DATABASE_URL=mongodb://mongo/db
+        command: bash -c "sleep infinity"  # DON'T run app. Wait forever (Otherwise app's container will be stopped)
+
+    # Mongo DB
+    mongo:
+        image: mongo # Use official image with latest mongo db
+        ports:
+            - "27017:27017" # Optional, to have ability to connect to mongo db from host OS
+        volumes:
+            - ./db:/data # to store databases in host OS directory ./db
+        restart: on-failure
